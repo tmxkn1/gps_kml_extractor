@@ -1,0 +1,36 @@
+<launch>
+
+	<arg name="fix_topic" default="/reach/fix"/>
+	<arg name="odom_topic" default="/odom"/>
+	
+	<arg name="directory" default="$(find gps_kml_extractor)"/>
+	<arg name="kml_file" value="$(arg directory)/gps.kml"/>
+	<arg name="utm_file" value="$(arg directory)/utm.txt"/>
+	<arg name="odom_file" value="$(arg directory)/odom.txt"/>
+
+	<arg name="utm_extract_time" default="true"/>
+	<arg name="odom_extract_time" default="true"/>
+
+	<!-- utm odometry node, requires gps_common package -->
+	<node name="utm_odometry_node" pkg="gps_common" type="utm_odometry_node" output="screen">
+		<remap from="/fix"  to="$(arg fix_topic)"/>
+		<remap from="/odom"  to="/utm_odom"/>
+	</node>
+
+	<!-- KML extractor node -->
+	<node name="kml_extractor" pkg="gps_kml_extractor" type="kml_extractor_node" output="screen" >
+		<remap from="/fix"  to="$(arg fix_topic)"/>
+		<remap from="/odom"  to="/utm_odom"/>
+		<param name="utm_extract_time" value="$(arg odom_extract_time)"/>
+		<param name="kml_file" value="$(arg kml_file)"/>
+		<param name="utm_file" value="$(arg utm_file)"/>
+	</node>
+
+	<!-- Odom extractor node -->
+	<node name="odom_extractor" pkg="gps_kml_extractor" type="odom_extractor_node" output="screen" >
+		<remap from="/odom"  to="$(arg odom_topic)"/>
+		<param name="odom_extract_time" value="$(arg odom_extract_time)"/>
+		<param name="odom_file" value="$(arg odom_file)"/>
+	</node>
+		
+</launch>

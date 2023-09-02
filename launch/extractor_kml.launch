@@ -1,0 +1,11 @@
+<launch>
+	<arg name="fix_topic" default="/reach/fix"/>
+	<arg name="directory" default="$(find gps_kml_extractor)"/>
+
+	<arg name="kml_file" value="$(arg directory)/gps.kml"/>
+
+	<node name="kml_extractor" pkg="gps_kml_extractor" type="kml_extractor_node" output="screen" >
+		<remap from="/fix"  to="$(arg fix_topic)"/>
+		<param name="kml_file" value="$(arg kml_file)/gps.kml"/>
+	</node>		
+</launch>
